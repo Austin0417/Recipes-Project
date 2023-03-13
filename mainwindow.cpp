@@ -10,6 +10,8 @@ MainWindow::MainWindow(QWidget *parent)
     removeBtn = ui->removeBtn;
     calendarBtn = ui->calendarBtn;
     listView = ui->listView;
+    removeBtn->setEnabled(false);
+    searchBtn->setEnabled(false);
     model = new RecipeListModel(recipeList);
     listView->setModel(model);
     listView->show();
@@ -69,6 +71,13 @@ void MainWindow::onRemoveClicked() {
         model = new RecipeListModel(recipeList);
         listView->setModel(model);
         listView->show();
+        if (recipeList.isEmpty()) {
+            removeBtn->setEnabled(false);
+            searchBtn->setEnabled(false);
+        } else {
+            removeBtn->setEnabled(true);
+            searchBtn->setEnabled(true);
+        }
 
     } else {
         QMessageBox::critical(this, "Error", "Recipe to remove does not exist!");
@@ -105,18 +114,20 @@ void MainWindow::onAddClicked() {
         return;
     }
 
-    Recipe* newRecipe = new Recipe();
-    newRecipe->setName(name);
-    newRecipe->listIngredients(ingredients);
-    newRecipe->setInstructions(instructions);
+    Recipe* newRecipe = new Recipe(name, ingredients, instructions);
+
     recipeList.append(newRecipe);
     delete model;
     model = new RecipeListModel(recipeList);
+
     listView->setModel(model);
     listView->show();
+
     qDebug() << "Ingredients: " << newRecipe->getIngredients();
     qDebug() << "Instructions: " << newRecipe->getInstructions();
     qDebug() << "List size is now: " << recipeList.size();
+    removeBtn->setEnabled(true);
+    searchBtn->setEnabled(true);
 }
 
 
@@ -145,7 +156,12 @@ QList<Recipe*> MainWindow::getRecipeList() {
 }
 
 void MainWindow::onCalendarBtnClicked() {
-    CalendarDialog* calendarDialog = new CalendarDialog(this);
+    CalendarDialog* calendarDialog;
+    if (!savedCalendar) {
+        calendarDialog = new CalendarDialog(this);
+    } else {
+        calendarDialog = savedCalendar;
+    }
     calendarDialog->exec();
 }
 
@@ -161,4 +177,8 @@ void MainWindow::onListItemClicked(const QModelIndex &index) {
         dialog->exec();
 
     }
+}
+
+void MainWindow::setSavedCalendar(CalendarDialog* calendar) {
+    savedCalendar = calendar;
 }
