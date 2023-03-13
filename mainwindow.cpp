@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "CalendarDialog.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -27,29 +28,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void Recipe::setName(QString name_) {
-    name = name_;
-}
-
-void Recipe::listIngredients(QString ingredients_) {
-    ingredients = ingredients_;
-}
-
-QString Recipe::getIngredients() {
-    return ingredients;
-}
-
-QString Recipe::getName() {
-    return name;
-}
-
-void Recipe::setInstructions(QString instructions_) {
-    instructions = instructions_;
-}
-
-QString Recipe::getInstructions() {
-    return instructions;
-}
 
 int MainWindow::findRecipe(QString name) {
     for (auto it = recipeList.begin(); it != recipeList.end(); ++it) {
