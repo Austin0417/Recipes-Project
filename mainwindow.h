@@ -21,18 +21,6 @@ namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
 
-
-class MyDate : public QDate {
-public:
-    MyDate() : QDate() {}
-    void setEvent(QString event_) {
-        event = event_;
-    }
-
-private:
-    QString event;
-};
-
 class CalendarDialog;
 
 class MainWindow : public QMainWindow

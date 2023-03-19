@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     CalendarDialog.cpp \
+    EventDialog.cpp \
     Recipe.cpp \
     RecipeDialog.cpp \
     RecipeListModel.cpp \
@@ -18,6 +19,7 @@ SOURCES += \
 
 HEADERS += \
     CalendarDialog.h \
+    EventDialog.h \
     Recipe.h \
     RecipeDialog.h \
     RecipeListModel.h \
