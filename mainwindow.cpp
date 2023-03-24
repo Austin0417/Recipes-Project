@@ -13,6 +13,36 @@ MainWindow::MainWindow(QWidget *parent)
     listView = ui->listView;
     removeBtn->setEnabled(false);
     searchBtn->setEnabled(false);
+    addBtn->setIcon(QIcon(":/button_icons/F:/Pictures/plus_icon.png"));
+    searchBtn->setIcon(QIcon(":/button_icons/F:/Pictures/magnifying_glass_icon.png"));
+    removeBtn->setIcon(QIcon(":/button_icons/F:/Pictures/remove_icon.png"));
+
+    QPalette addPalette = addBtn->palette();
+    QPalette removePalette = removeBtn->palette();
+    QPalette searchPalette = searchBtn->palette();
+
+    addPalette.setColor(QPalette::Button, QColor(0, 170, 0));
+    addBtn->setAutoFillBackground(true);
+    addBtn->setFlat(true);
+    addBtn->setPalette(addPalette);
+    addBtn->update();
+
+    removePalette.setColor(QPalette::Button, QColor(165, 2, 35));
+    removeBtn->setAutoFillBackground(true);
+    removeBtn->setFlat(true);
+    removeBtn->setPalette(removePalette);
+    removeBtn->update();
+
+    searchPalette.setColor(QPalette::Button, QColor(0, 183, 200));
+    searchBtn->setAutoFillBackground(true);
+    searchBtn->setFlat(true);
+    searchBtn->setPalette(searchPalette);
+    searchBtn->update();
+
+    addBtn->setIconSize(QSize(30, 30));
+    removeBtn->setIconSize(QSize(30, 30));
+    searchBtn->setIconSize(QSize(30, 30));
+
     model = new RecipeListModel(recipeList);
     listView->setModel(model);
     listView->show();
@@ -68,6 +98,8 @@ void MainWindow::onAddClicked() {
     QString addRecipe = QInputDialog::getText(this, tr("Name of Recipe:"), tr("Recipe Name: "), QLineEdit::Normal, "", &ok);
     if (ok and !addRecipe.isEmpty()) {
         name = addRecipe;
+    } else if (!ok) {
+        return;
     } else {
         QMessageBox::critical(this, "Error", "Invalid or empty name!");
         return;
@@ -97,7 +129,6 @@ void MainWindow::onAddClicked() {
     recipeList.append(newRecipe);
     delete model;
     model = new RecipeListModel(recipeList);
-
     listView->setModel(model);
     listView->show();
 

@@ -34,7 +34,6 @@ public slots:
         }
     }
     void onDateClicked(QDate date) {
-//        QCalendarWidget* calendar = qobject_cast<QCalendarWidget*>(sender());
         if (calendar) {
             bool ok;
             QString event = QInputDialog::getText(this, tr("Event details"), tr("Enter event details: "), QLineEdit::Normal, "", &ok);

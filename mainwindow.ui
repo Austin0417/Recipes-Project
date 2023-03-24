@@ -20,15 +20,15 @@
    <widget class="QPushButton" name="addButton">
     <property name="geometry">
      <rect>
-      <x>510</x>
-      <y>280</y>
-      <width>100</width>
-      <height>24</height>
+      <x>680</x>
+      <y>140</y>
+      <width>151</width>
+      <height>91</height>
      </rect>
     </property>
     <property name="maximumSize">
      <size>
-      <width>100</width>
+      <width>16777215</width>
       <height>16777215</height>
      </size>
     </property>
@@ -39,10 +39,10 @@
    <widget class="QPushButton" name="searchButton">
     <property name="geometry">
      <rect>
-      <x>510</x>
-      <y>300</y>
-      <width>101</width>
-      <height>24</height>
+      <x>680</x>
+      <y>230</y>
+      <width>151</width>
+      <height>91</height>
      </rect>
     </property>
     <property name="text">
@@ -52,18 +52,18 @@
    <widget class="QListView" name="listView">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>110</y>
-      <width>256</width>
-      <height>192</height>
+      <x>0</x>
+      <y>30</y>
+      <width>431</width>
+      <height>541</height>
      </rect>
     </property>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>90</y>
+      <x>10</x>
+      <y>10</y>
       <width>49</width>
       <height>16</height>
      </rect>
@@ -75,10 +75,10 @@
    <widget class="QPushButton" name="removeBtn">
     <property name="geometry">
      <rect>
-      <x>510</x>
+      <x>680</x>
       <y>320</y>
-      <width>101</width>
-      <height>24</height>
+      <width>151</width>
+      <height>91</height>
      </rect>
     </property>
     <property name="text">
@@ -88,10 +88,10 @@
    <widget class="QPushButton" name="calendarBtn">
     <property name="geometry">
      <rect>
-      <x>780</x>
-      <y>150</y>
-      <width>80</width>
-      <height>24</height>
+      <x>1050</x>
+      <y>0</y>
+      <width>161</width>
+      <height>61</height>
      </rect>
     </property>
     <property name="text">

@@ -1,15 +1,20 @@
 #include "CalendarDialog.h"
 
 void CalendarDialog::onResetBtnClick() {
-//    delete calendar;
-//    calendar = new QCalendarWidget(this);
-//    layout->addWidget(calendar);
-    clearCalendar();
-    initializeCalendar();
-    connect(calendar, SIGNAL(clicked(QDate)), this, SLOT(onDateClicked(QDate)));
-    connect(resetBtn, &QPushButton::clicked, this, &CalendarDialog::onResetBtnClick);
-    connect(viewEventsBtn, &QPushButton::clicked, this, &CalendarDialog::onViewButtonClick);
-    eventDayMapping.clear();
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Confirmation", "Are you sure you want to clear the calendar?", QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+        clearCalendar();
+        initializeCalendar();
+        connect(calendar, SIGNAL(clicked(QDate)), this, SLOT(onDateClicked(QDate)));
+        connect(resetBtn, &QPushButton::clicked, this, &CalendarDialog::onResetBtnClick);
+        connect(viewEventsBtn, &QPushButton::clicked, this, &CalendarDialog::onViewButtonClick);
+        eventDayMapping.clear();
+        labelMapping.clear();
+    } else {
+        qDebug() << "Confirmation to clear was declined.";
+        return;
+    }
 }
 
 void CalendarDialog::onViewButtonClick() {
@@ -20,13 +25,6 @@ void CalendarDialog::onViewButtonClick() {
 QMap<QDate, QList<QString>> CalendarDialog::getEventMapping() {
     return eventDayMapping;
 }
-
-//void CalendarDialog::clearLabels() {
-//    for (auto it = labelList.begin(); it != labelList.end(); ++it) {
-//        layout->removeWidget(*it);
-//        delete *it;
-//    }
-//}
 
 void CalendarDialog::initializeCalendar() {
     calendar = new QCalendarWidget(this);

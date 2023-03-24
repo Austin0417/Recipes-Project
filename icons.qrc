@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/button_icons">
+        <file>F:/Pictures/plus_icon.png</file>
+        <file>F:/Pictures/magnifying_glass_icon.png</file>
+        <file>F:/Pictures/remove_icon.png</file>
+    </qresource>
+</RCC>
