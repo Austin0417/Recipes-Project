@@ -3,6 +3,7 @@
 #include "ui_mainwindow.h"
 #include "Recipe.h"
 #include "RecipeListModel.h"
+#include "RecipeInfoDialog.h"
 #include "RecipeDialog.h"
 #include <QMainWindow>
 #include <QFileDialog>
@@ -38,6 +39,7 @@ public:
     int findRecipe(QString name);
     QList<Recipe*> getRecipeList();
     void setSavedCalendar(CalendarDialog* calendar);
+    QVector<QString>* getRecipeInformation();
 private:
     Ui::MainWindow *ui;
     QPushButton* addBtn;
@@ -48,6 +50,7 @@ private:
     QPushButton* removeBtn;
     QPushButton* calendarBtn;
     CalendarDialog* savedCalendar = nullptr;
+    QVector<QString> recipeInformation;
 };
 
 #endif // MAINWINDOW_H

@@ -12,6 +12,7 @@ class CalendarDialog : public QDialog {
     Q_OBJECT
 public:
     CalendarDialog(QWidget* parent = nullptr) : QDialog(parent) {
+        this->setWindowTitle("Calendar");
         layout = new QVBoxLayout(this);
         initializeCalendar();
         connect(calendar, SIGNAL(clicked(QDate)), this, SLOT(onDateClicked(QDate)));

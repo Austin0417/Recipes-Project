@@ -13,6 +13,7 @@ SOURCES += \
     EventDialog.cpp \
     Recipe.cpp \
     RecipeDialog.cpp \
+    RecipeInfoDialog.cpp \
     RecipeListModel.cpp \
     main.cpp \
     mainwindow.cpp

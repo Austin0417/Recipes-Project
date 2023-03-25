@@ -20,8 +20,8 @@ public:
         ingredientsText->setReadOnly(true);
         instructionsText->setReadOnly(true);
         layout->addWidget(ingredientsLabel);
-        layout->addWidget(instructionsLabel);
         layout->addWidget(ingredientsText);
+        layout->addWidget(instructionsLabel);
         layout->addWidget(instructionsText);
         layout->addWidget(editBtn);
         connect(editBtn, &QPushButton::clicked, this, &RecipeDialog::onEditButtonClicked);

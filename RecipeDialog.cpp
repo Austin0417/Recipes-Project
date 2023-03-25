@@ -2,6 +2,7 @@
 
 
 void RecipeDialog::setWidgetText(Recipe* recipe) {
+    RecipeDialog::setWindowTitle(recipe->getName());
     ingredientsText->setText(recipe->getIngredients());
     instructionsText->setText(recipe->getInstructions());
 }

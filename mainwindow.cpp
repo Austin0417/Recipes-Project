@@ -6,6 +6,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    MainWindow::setWindowTitle("Recipes Project");
     addBtn = ui->addButton;
     searchBtn = ui->searchButton;
     removeBtn = ui->removeBtn;
@@ -46,6 +48,8 @@ MainWindow::MainWindow(QWidget *parent)
     model = new RecipeListModel(recipeList);
     listView->setModel(model);
     listView->show();
+    setStyleSheet("QMainWindow {background-image: url(:/button_icons/F:/Pictures/Recipes Background Image.PNG); background-repeat: no-repeat; background-size: cover;}");
+
     connect(addBtn, &QPushButton::clicked, this, &MainWindow::onAddClicked);
     connect(searchBtn, &QPushButton::clicked, this, &MainWindow::onSearchClicked);
     connect(removeBtn, &QPushButton::clicked, this, &MainWindow::onRemoveClicked);
@@ -68,6 +72,10 @@ int MainWindow::findRecipe(QString name) {
     return -1;
 }
 
+QVector<QString>* MainWindow::getRecipeInformation() {
+    return &recipeInformation;
+}
+
 void MainWindow::onRemoveClicked() {
     bool ok;
     QString nameToRemove = QInputDialog::getText(this, tr("Name of Recipe to Remove: "), tr("Recipe Name: "), QLineEdit::Normal, "", &ok);
@@ -87,45 +95,28 @@ void MainWindow::onRemoveClicked() {
             searchBtn->setEnabled(true);
         }
 
-    } else {
+    } else if (!ok) {
+        return;
+    }
+    else if (it < 0) {
         QMessageBox::critical(this, "Error", "Recipe to remove does not exist!");
+        return;
+    }
+    else {
+        return;
     }
 }
 
 void MainWindow::onAddClicked() {
-    bool ok;
-    QString name;
-    QString addRecipe = QInputDialog::getText(this, tr("Name of Recipe:"), tr("Recipe Name: "), QLineEdit::Normal, "", &ok);
-    if (ok and !addRecipe.isEmpty()) {
-        name = addRecipe;
-    } else if (!ok) {
-        return;
-    } else {
-        QMessageBox::critical(this, "Error", "Invalid or empty name!");
+      RecipeInfoDialog* recipeDialog = new RecipeInfoDialog(this);
+      recipeDialog->exec();
+
+    if (recipeInformation.size() < 3) {
         return;
     }
-    ok = false;
-    QString addIngredients = QInputDialog::getText(this, tr("Recipe Ingredients"), tr("Ingredients: "), QLineEdit::Normal, "", &ok);
-    QString ingredients;
-    if (ok and !addIngredients.isEmpty()) {
-        ingredients = addIngredients;
-    } else {
-        QMessageBox::critical(this, "Error", "Invalid or empty ingredients!");
-        return;
-    }
-
-    ok = false;
-    QString addInstructions = QInputDialog::getText(this, tr("Recipe Instructions"), tr("Instructions: "), QLineEdit::Normal, "", &ok);
-    QString instructions;
-    if (ok and !addInstructions.isEmpty()) {
-        instructions = addInstructions;
-    } else {
-        QMessageBox::critical(this, "Error", "Invalid or empty instructions!");
-        return;
-    }
-
-    Recipe* newRecipe = new Recipe(name, ingredients, instructions);
-
+    qDebug() << "Recipe information size is: " + recipeInformation.size();
+    Recipe* newRecipe = new Recipe(recipeInformation[0], recipeInformation[1], recipeInformation[2]);
+    recipeInformation.clear();
     recipeList.append(newRecipe);
     delete model;
     model = new RecipeListModel(recipeList);
@@ -154,8 +145,15 @@ void MainWindow::onSearchClicked() {
                 dialog->exec();
                 return;
         // Recipe does not exist
-    } else {
-        QMessageBox::critical(this, "Error", "Recipe does not exist!");
+    }
+    else if (!ok) {
+        return;
+    }
+    else if (iteratorPos < 0) {
+        QMessageBox::critical(this, "Error", "Recipe to remove does not exist!");
+        return;
+    }
+    else {
         return;
     }
 }
