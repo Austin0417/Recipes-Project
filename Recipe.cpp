@@ -23,3 +23,12 @@ void Recipe::setInstructions(QString instructions_) {
 QString Recipe::getInstructions() {
     return instructions;
 }
+
+void Recipe::setFavorited(bool status) {
+    isFavorited = status;
+}
+
+bool Recipe::getFavoritedStatus() {
+    return isFavorited;
+}
+

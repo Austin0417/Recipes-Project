@@ -23,6 +23,7 @@ QT_END_NAMESPACE
 
 
 class CalendarDialog;
+class ListViewDelegate;
 
 class MainWindow : public QMainWindow
 {
@@ -40,6 +41,14 @@ public:
     QList<Recipe*> getRecipeList();
     void setSavedCalendar(CalendarDialog* calendar);
     QVector<QString>* getRecipeInformation();
+    void viewRecipeRightClick();
+    void favoriteRecipeRightClick();
+    void removeRecipeRightClick();
+    void updateListView();
+    RecipeListModel* getModel();
+
+public slots:
+    void onListItemRightClicked(const QPoint& pos);
 private:
     Ui::MainWindow *ui;
     QPushButton* addBtn;
@@ -51,6 +60,7 @@ private:
     QPushButton* calendarBtn;
     CalendarDialog* savedCalendar = nullptr;
     QVector<QString> recipeInformation;
+    ListViewDelegate* delegate = nullptr;
 };
 
 #endif // MAINWINDOW_H

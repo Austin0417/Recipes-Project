@@ -17,6 +17,11 @@ QVariant RecipeListModel::data(const QModelIndex &index, int role) const {
     if (role == Qt::UserRole) {
         return QVariant::fromValue(recipe);
     }
+    if (role == Qt::DecorationRole) {
+        if (m_recipes.at(index.row())->getFavoritedStatus()) {
+
+        }
+    }
     return QVariant();
 }
 void RecipeListModel::addRecipe(Recipe* recipe) {

@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "CalendarDialog.h"
+#include "ListViewDelegate.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -46,15 +48,28 @@ MainWindow::MainWindow(QWidget *parent)
     searchBtn->setIconSize(QSize(30, 30));
 
     model = new RecipeListModel(recipeList);
+    listView->setContextMenuPolicy(Qt::CustomContextMenu);
+    delegate = new ListViewDelegate(this);
+    listView->setItemDelegate(delegate);
     listView->setModel(model);
     listView->show();
-    setStyleSheet("QMainWindow {background-image: url(:/button_icons/F:/Pictures/Recipes Background Image.PNG); background-repeat: no-repeat; background-size: cover;}");
+
+    QLabel* background = new QLabel(this);
+    QPixmap backgroundImage(":/button_icons/F:/Pictures/Recipes Background Image.PNG");
+    background->setScaledContents(true);
+    QPixmap scaledBackground = backgroundImage.scaled(this->size(), Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+
+    background->setPixmap(scaledBackground);
+    background->setAlignment(Qt::AlignCenter);
+    background->lower();
+    //setStyleSheet("QMainWindow {background-image: url(:/button_icons/F:/Pictures/Recipes Background Image.PNG); background-repeat: no-repeat; background-size: cover;}");
 
     connect(addBtn, &QPushButton::clicked, this, &MainWindow::onAddClicked);
     connect(searchBtn, &QPushButton::clicked, this, &MainWindow::onSearchClicked);
     connect(removeBtn, &QPushButton::clicked, this, &MainWindow::onRemoveClicked);
     connect(calendarBtn, &QPushButton::clicked, this, &MainWindow::onCalendarBtnClicked);
-    connect(listView, &QAbstractItemView::clicked, this, &MainWindow::onListItemClicked);
+    connect(listView, &QAbstractItemView::doubleClicked, this, &MainWindow::onListItemClicked);
+    connect(listView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(onListItemRightClicked(QPoint)));
 }
 
 MainWindow::~MainWindow()
@@ -72,8 +87,27 @@ int MainWindow::findRecipe(QString name) {
     return -1;
 }
 
+RecipeListModel* MainWindow::getModel() {
+    return model;
+}
+
 QVector<QString>* MainWindow::getRecipeInformation() {
     return &recipeInformation;
+}
+
+void MainWindow::updateListView() {
+    delete model;
+    model = new RecipeListModel(recipeList);
+    listView->setModel(model);
+    listView->show();
+    if (recipeList.isEmpty()) {
+        removeBtn->setEnabled(false);
+        searchBtn->setEnabled(false);
+    } else {
+        removeBtn->setEnabled(true);
+        searchBtn->setEnabled(true);
+    }
+
 }
 
 void MainWindow::onRemoveClicked() {
@@ -83,17 +117,7 @@ void MainWindow::onRemoveClicked() {
     if (ok && !nameToRemove.isEmpty() && it >= 0) {
         QMessageBox::information(this, "Remove", "Removing recipe...");
         recipeList.remove(it);
-        delete model;
-        model = new RecipeListModel(recipeList);
-        listView->setModel(model);
-        listView->show();
-        if (recipeList.isEmpty()) {
-            removeBtn->setEnabled(false);
-            searchBtn->setEnabled(false);
-        } else {
-            removeBtn->setEnabled(true);
-            searchBtn->setEnabled(true);
-        }
+        updateListView();
 
     } else if (!ok) {
         return;
@@ -108,20 +132,17 @@ void MainWindow::onRemoveClicked() {
 }
 
 void MainWindow::onAddClicked() {
-      RecipeInfoDialog* recipeDialog = new RecipeInfoDialog(this);
-      recipeDialog->exec();
+      RecipeInfoDialog* recipeInfoDialog = new RecipeInfoDialog(this);
+      recipeInfoDialog->exec();
 
     if (recipeInformation.size() < 3) {
         return;
     }
-    qDebug() << "Recipe information size is: " + recipeInformation.size();
+    qDebug() << "Recipe information size is: " << recipeInformation.size();
     Recipe* newRecipe = new Recipe(recipeInformation[0], recipeInformation[1], recipeInformation[2]);
     recipeInformation.clear();
     recipeList.append(newRecipe);
-    delete model;
-    model = new RecipeListModel(recipeList);
-    listView->setModel(model);
-    listView->show();
+    updateListView();
 
     qDebug() << "Ingredients: " << newRecipe->getIngredients();
     qDebug() << "Instructions: " << newRecipe->getInstructions();
@@ -185,6 +206,89 @@ void MainWindow::onListItemClicked(const QModelIndex &index) {
 
     }
 }
+
+
+void MainWindow::onListItemRightClicked(const QPoint& pos) {
+    QModelIndex index = listView->indexAt(pos);
+    qDebug() << "User right clicked at index: " << index.row();
+    if (index.isValid()) {
+        Recipe* recipe = model->data(index, Qt::UserRole).value<Recipe*>();
+        QMenu* menu = new QMenu(this);
+        QAction* actionView = new QAction("View recipe", this);
+        QAction* favoriteView;
+        if (recipe->getFavoritedStatus()) {
+            favoriteView = new QAction("Remove from favorites", this);
+        } else {
+            favoriteView = new QAction("Add to favorites", this);
+        }
+        QAction* removeView = new QAction("Remove", this);
+        connect(actionView, &QAction::triggered, this, &MainWindow::viewRecipeRightClick);
+        connect(favoriteView, &QAction::triggered, this, &MainWindow::favoriteRecipeRightClick);
+        connect(removeView, &QAction::triggered, this, &MainWindow::removeRecipeRightClick);
+        menu->addAction(actionView);
+        menu->addAction(favoriteView);
+        menu->addAction(removeView);
+        menu->exec(listView->viewport()->mapToGlobal(pos));
+    }
+
+}
+
+void MainWindow::viewRecipeRightClick() {
+    QAction* action = qobject_cast<QAction*>(sender());
+    if (action) {
+        QModelIndex index = listView->currentIndex();
+        if (index.isValid()) {
+            Recipe* recipe = model->data(index, Qt::UserRole).value<Recipe*>();
+            RecipeDialog* dialog = new RecipeDialog(this);
+            dialog->setWidgetText(recipe);
+            dialog->exec();
+        }
+    }
+}
+
+void MainWindow::favoriteRecipeRightClick() {
+    QAction* action = qobject_cast<QAction*>(sender());
+    if (action) {
+        QModelIndex index = listView->currentIndex();
+        if (index.isValid()) {
+            Recipe* recipe = model->data(index, Qt::UserRole).value<Recipe*>();
+            int it = findRecipe(recipe->getName());
+            if (it >= 0) {
+                if (!recipe->getFavoritedStatus()) {
+                    recipe->setFavorited(true);
+                    recipeList.remove(it);
+                    recipeList.prepend(recipe);
+                    updateListView();
+                    qDebug() << recipe->getName() << " favorites status is now " << recipe->getFavoritedStatus();
+                    model->dataChanged(index, index);
+                } else {
+                    recipe->setFavorited(false);
+                    recipeList.remove(it);
+                    recipeList.append(recipe);
+                    updateListView();
+                    model->dataChanged(index, index);
+                    qDebug() << recipe->getName() << " favorites status is now " << recipe->getFavoritedStatus();
+                }
+            }
+        }
+    }
+}
+
+void MainWindow::removeRecipeRightClick() {
+    QAction* action = qobject_cast<QAction*>(sender());
+    if (action) {
+        QModelIndex index = listView->currentIndex();
+        if (index.isValid()) {
+            Recipe* recipe = model->data(index, Qt::UserRole).value<Recipe*>();
+            int it = findRecipe(recipe->getName());
+            if (it >= 0) {
+                recipeList.remove(it);
+                updateListView();
+            }
+        }
+    }
+}
+
 
 void MainWindow::setSavedCalendar(CalendarDialog* calendar) {
     savedCalendar = calendar;
