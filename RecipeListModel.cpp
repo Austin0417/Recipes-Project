@@ -19,7 +19,7 @@ QVariant RecipeListModel::data(const QModelIndex &index, int role) const {
     }
     if (role == Qt::DecorationRole) {
         if (m_recipes.at(index.row())->getFavoritedStatus()) {
-
+            return QIcon(":/button_icons/F:/Pictures/favorites-icon.png");
         }
     }
     return QVariant();

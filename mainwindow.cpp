@@ -95,9 +95,12 @@ QVector<QString>* MainWindow::getRecipeInformation() {
     return &recipeInformation;
 }
 
-void MainWindow::updateListView() {
+void MainWindow::updateListView(QModelIndex* index) {
     delete model;
     model = new RecipeListModel(recipeList);
+    if (index) {
+        model->setData(*index, QBrush(Qt::yellow), Qt::ForegroundRole);
+    }
     listView->setModel(model);
     listView->show();
     if (recipeList.isEmpty()) {
@@ -112,12 +115,12 @@ void MainWindow::updateListView() {
 
 void MainWindow::onRemoveClicked() {
     bool ok;
-    QString nameToRemove = QInputDialog::getText(this, tr("Name of Recipe to Remove: "), tr("Recipe Name: "), QLineEdit::Normal, "", &ok);
+    QString nameToRemove = QInputDialog::getText(this, tr("Remove Recipe "), tr("Recipe Name: "), QLineEdit::Normal, "", &ok);
     auto it = findRecipe(nameToRemove);
     if (ok && !nameToRemove.isEmpty() && it >= 0) {
         QMessageBox::information(this, "Remove", "Removing recipe...");
         recipeList.remove(it);
-        updateListView();
+        updateListView(nullptr);
 
     } else if (!ok) {
         return;
@@ -142,7 +145,7 @@ void MainWindow::onAddClicked() {
     Recipe* newRecipe = new Recipe(recipeInformation[0], recipeInformation[1], recipeInformation[2]);
     recipeInformation.clear();
     recipeList.append(newRecipe);
-    updateListView();
+    updateListView(nullptr);
 
     qDebug() << "Ingredients: " << newRecipe->getIngredients();
     qDebug() << "Instructions: " << newRecipe->getInstructions();
@@ -154,7 +157,7 @@ void MainWindow::onAddClicked() {
 
 void MainWindow::onSearchClicked() {
     bool ok;
-    QString searchedRecipe = QInputDialog::getText(this, tr("Enter the recipe name that you are looking for"), tr("Recipe Name: "), QLineEdit::Normal, "", &ok);
+    QString searchedRecipe = QInputDialog::getText(this, tr("Search Recipe"), tr("Recipe Name: "), QLineEdit::Normal, "", &ok);
     int iteratorPos = findRecipe(searchedRecipe);
     if (ok and !searchedRecipe.isEmpty() && iteratorPos >= 0) {
                 // Recipe found
@@ -256,17 +259,23 @@ void MainWindow::favoriteRecipeRightClick() {
             if (it >= 0) {
                 if (!recipe->getFavoritedStatus()) {
                     recipe->setFavorited(true);
+                    recipe->setName(recipe->getName() + " (favorited)");
+                    QIcon icon = model->data(index, Qt::DecorationRole).value<QIcon>();
                     recipeList.remove(it);
                     recipeList.prepend(recipe);
-                    updateListView();
+                    updateListView(&index);
                     qDebug() << recipe->getName() << " favorites status is now " << recipe->getFavoritedStatus();
-                    model->dataChanged(index, index);
                 } else {
                     recipe->setFavorited(false);
+                    QStringList originalNameList = recipe->getName().split(" ", Qt::KeepEmptyParts, Qt::CaseSensitive);
+                    QString originalName = "";
+                    for (int i = 0; i < originalNameList.size() - 1; i++ ) {
+                        originalName += originalNameList[i];
+                    }
+                    recipe->setName(originalName);
                     recipeList.remove(it);
                     recipeList.append(recipe);
-                    updateListView();
-                    model->dataChanged(index, index);
+                    updateListView(&index);
                     qDebug() << recipe->getName() << " favorites status is now " << recipe->getFavoritedStatus();
                 }
             }
@@ -283,7 +292,7 @@ void MainWindow::removeRecipeRightClick() {
             int it = findRecipe(recipe->getName());
             if (it >= 0) {
                 recipeList.remove(it);
-                updateListView();
+                updateListView(nullptr);
             }
         }
     }

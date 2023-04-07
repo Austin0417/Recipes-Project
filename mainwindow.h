@@ -44,7 +44,7 @@ public:
     void viewRecipeRightClick();
     void favoriteRecipeRightClick();
     void removeRecipeRightClick();
-    void updateListView();
+    void updateListView(QModelIndex* index);
     RecipeListModel* getModel();
 
 public slots:
