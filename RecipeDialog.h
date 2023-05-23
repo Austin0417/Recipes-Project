@@ -11,7 +11,7 @@
 class RecipeDialog : public QDialog {
 public:
     RecipeDialog(QWidget* parent = nullptr) : QDialog(parent) {
-        QVBoxLayout* layout = new QVBoxLayout(this);
+        layout = new QVBoxLayout(this);
         ingredientsLabel = new QLabel("Ingredients", this);
         instructionsLabel = new QLabel("Instructions", this);
         ingredientsText = new QTextEdit(this);
@@ -28,7 +28,16 @@ public:
     }
     void setWidgetText(Recipe* recipe);
     void onEditButtonClicked();
+    ~RecipeDialog() {
+        delete layout;
+        delete ingredientsLabel;
+        delete instructionsLabel;
+        delete ingredientsText;
+        delete instructionsText;
+        delete editBtn;
+    }
 private:
+    QVBoxLayout* layout;
     QLabel* ingredientsLabel;
     QLabel* instructionsLabel;
     QTextEdit* ingredientsText;

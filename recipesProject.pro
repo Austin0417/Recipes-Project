@@ -1,4 +1,5 @@
 QT       += core gui
+QT       += sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -12,6 +13,7 @@ SOURCES += \
     CalendarDialog.cpp \
     EventDialog.cpp \
     ListViewDelegate.cpp \
+    LoginDialog.cpp \
     Recipe.cpp \
     RecipeDialog.cpp \
     RecipeInfoDialog.cpp \
@@ -23,6 +25,7 @@ HEADERS += \
     CalendarDialog.h \
     EventDialog.h \
     ListViewDelegate.h \
+    LoginDialog.h \
     Recipe.h \
     RecipeDialog.h \
     RecipeInfoDialog.h \

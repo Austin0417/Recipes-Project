@@ -20,12 +20,14 @@ public:
         connect(this, SIGNAL(rejected()), this, SLOT(handleExit()));
         connect(viewEventsBtn, &QPushButton::clicked, this, &CalendarDialog::onViewButtonClick);
     }
+
     void initializeCalendar();
     void onResetBtnClick();
     void onViewButtonClick();
     void clearLabels();
     void clearCalendar();
     QMap<QDate, QList<QString>> getEventMapping();
+
 public slots:
     void handleExit() {
         qDebug() << "Exiting calendar...";

@@ -16,7 +16,10 @@ public:
         recordEvents();
     }
     void recordEvents();
-
+    ~EventDialog() {
+        delete layout;
+        delete eventsList;
+    }
 private:
     QVBoxLayout* layout;
     QTextEdit* eventsList;

@@ -22,6 +22,13 @@ public:
         layout->addWidget(enterBtn);
         connect(enterBtn, &QPushButton::clicked, this, &RecipeInfoDialog::onEnterButtonClicked);
     }
+    ~RecipeInfoDialog() {
+        delete layout;
+        delete recipeName;
+        delete recipeIngredients;
+        delete recipeInstructions;
+        delete enterBtn;
+    }
     void onEnterButtonClicked();
 private:
     QFormLayout* layout;
