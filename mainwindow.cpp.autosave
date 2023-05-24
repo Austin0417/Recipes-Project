@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
   removeBtn->setIcon(QIcon(":/button_icons/F:/Pictures/remove_icon.png"));
 
 
-  listView->setStyleSheet("background-color: #a75a00; color: white;");
+  listView->setStyleSheet("background-color: #a75a00;color: white;");
 
   model = new RecipeListModel(recipeList);
   listView->setContextMenuPolicy(Qt::CustomContextMenu);

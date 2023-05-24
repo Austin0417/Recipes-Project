@@ -4,7 +4,7 @@
 #include "Recipe.h"
 #include "RecipeListModel.h"
 #include "RecipeInfoDialog.h"
-#include "RecipeDialog.h"
+
 
 #include <QMainWindow>
 #include <QFileDialog>
@@ -16,6 +16,8 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 #include <QCalendarWidget>
+#include <QtSql>
+#include <QSqlQuery>
 
 
 QT_BEGIN_NAMESPACE
@@ -25,6 +27,7 @@ QT_END_NAMESPACE
 
 class CalendarDialog;
 class ListViewDelegate;
+class RecipeDialog;
 class LoginDialog;
 
 class MainWindow : public QMainWindow
@@ -60,6 +63,7 @@ public:
     void setRecipeList(QList<Recipe*> recipeList);
     bool getLoginStatus();
 
+
 public slots:
     void onListItemRightClicked(const QPoint& pos);
 private:
@@ -79,6 +83,7 @@ private:
     QVector<QString> recipeInformation;
     ListViewDelegate* delegate = nullptr;
 
+    QSqlDatabase db;
     bool isLoggedIn = false;
     int currentUserId = -1;
 };

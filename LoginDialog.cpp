@@ -1,4 +1,5 @@
 #include "LoginDialog.h"
+#include <algorithm>
 
 
 void AccountLabel::enterEvent(QEnterEvent* event) {
@@ -36,7 +37,7 @@ void LoginDialog::onLoginEnterPressed() {
     if (!usernameInput->text().isEmpty() && !passwordInput->text().isEmpty()) {
         QString username = usernameInput->text();
         QString password = passwordInput->text();
-        QSqlQuery query(db);
+        QSqlQuery query(*db);
         query.prepare("SELECT id FROM accounts WHERE (username = ? OR email = ?) AND password = ?");
         query.addBindValue(username);
         query.addBindValue(username);
@@ -63,12 +64,14 @@ void LoginDialog::onLoginEnterPressed() {
                             recipe->setFavorited(favoritedStatus);
                             recipes.append(recipe);
                         }
+                        std::reverse(recipes.begin(), recipes.end());
                         window->setRecipeList(recipes);
                     }
                 }
             } else {
                 QMessageBox::information(this, "Error logging in", "Invalid credentials, please try again.");
             }
+            close();
         }
     } else {
         QMessageBox::information(this, "Error logging in", "One or more fields are empty. Please try again.");
@@ -78,7 +81,7 @@ void LoginDialog::onLoginEnterPressed() {
 
 void LoginDialog::onAccountCreateEnterPress() {
     if (!createEmail->text().isEmpty() && !createUsername->text().isEmpty() && !createPassword->text().isEmpty()) {
-        QSqlQuery query(db);
+        QSqlQuery query(*db);
         query.prepare("INSERT INTO accounts (email, username, password) VALUES (?, ?, ?)");
         query.addBindValue(createEmail->text());
         query.addBindValue(createUsername->text());

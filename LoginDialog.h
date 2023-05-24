@@ -32,26 +32,13 @@ signals:
 
 class LoginDialog : public QDialog {
 public:
-    LoginDialog(QWidget* parent_ = nullptr) : QDialog(parent_) {
+    LoginDialog(QSqlDatabase* db_, QWidget* parent_ = nullptr) : QDialog(parent_), db(db_) {
         setWindowTitle("Login");
         resize(QSize(400, 250));
 
         window = qobject_cast<MainWindow*>(parent());
 
-
-        db = QSqlDatabase::addDatabase("QPSQL");
-        db.setHostName("localhost");
-        db.setDatabaseName("users");
-        db.setUserName("postgres");
-        db.setPassword("I<3games");
-
-        if (db.open()) {
-            qDebug() << "Opened database!";
-        } else {
-            qDebug() << "Failed to open database!";
-        }
-
-        QSqlQuery query(db);
+        QSqlQuery query(*db);
         QString createAccountsTable("CREATE TABLE IF NOT EXISTS accounts ("
                                     "id SERIAL PRIMARY KEY,"
                                     "email TEXT,"
@@ -164,7 +151,7 @@ public:
     ~LoginDialog() {
         qDebug() << "LoginDialog destructor has been called";
         delete mainLayout;
-        db.close();
+//        db.close();
     }
 
 private:
@@ -185,7 +172,7 @@ private:
 
     QStackedLayout* layout;
 
-    QSqlDatabase db;
+    QSqlDatabase* db;
     MainWindow* window;
 };
 
