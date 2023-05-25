@@ -47,8 +47,10 @@ public:
     void onListItemClicked(const QModelIndex& index);
     int findRecipe(QString name);
     QList<Recipe*> getRecipeList();
-    void setSavedCalendar(CalendarDialog* calendar);
     QVector<QString>* getRecipeInformation();
+
+    void setSavedCalendar(CalendarDialog* calendar);
+    void setEvents(QMap<QDate, QList<QString>>* events);
 
     void viewRecipeRightClick();
     void favoriteRecipeRightClick();
@@ -79,9 +81,14 @@ private:
     QList <Recipe*> recipeList;
     QListView* listView;
     RecipeListModel* model;
-    CalendarDialog* savedCalendar = nullptr;
+
     QVector<QString> recipeInformation;
     ListViewDelegate* delegate = nullptr;
+
+    // Only used for saving the calendar when the user is not logged in
+    CalendarDialog* savedCalendar = nullptr;
+
+    QMap<QDate, QList<QString>>* userSavedEvents = nullptr;
 
     QSqlDatabase db;
     bool isLoggedIn = false;

@@ -199,6 +199,7 @@ void MainWindow::onLoginClick() {
       loginBtn->setText("Login");
       recipeList.clear();
       updateListView(nullptr);
+      savedCalendar = nullptr;
       return;
     } else {
       return;
@@ -278,8 +279,11 @@ QList<Recipe *> MainWindow::getRecipeList() { return recipeList; }
 
 void MainWindow::onCalendarBtnClicked() {
   CalendarDialog *calendarDialog;
-  if (!savedCalendar) {
-    calendarDialog = new CalendarDialog(this);
+  if (getLoginStatus()) {
+      calendarDialog = new CalendarDialog(&db, userSavedEvents, this);
+  }
+  else if (!savedCalendar) {
+    calendarDialog = new CalendarDialog(&db, nullptr, this);
   } else {
     calendarDialog = savedCalendar;
   }
@@ -436,6 +440,10 @@ bool MainWindow::getLoginStatus() { return isLoggedIn; }
 void MainWindow::setRecipeList(QList<Recipe *> recipeList_) {
   recipeList = recipeList_;
   updateListView(nullptr);
+}
+
+void MainWindow::setEvents(QMap<QDate, QList<QString>>* events) {
+    userSavedEvents = events;
 }
 
 

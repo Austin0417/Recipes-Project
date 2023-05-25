@@ -62,6 +62,16 @@ public:
             qDebug() << "Failed to create UserSavedRecipes table";
         }
 
+        QString createSavedCalendarTable("CREATE TABLE IF NOT EXISTS SavedCalendar ("
+                                         "id INT REFERENCES accounts(id),"
+                                         "date TEXT,"
+                                         "event TEXT)");
+
+        if (query.exec(createSavedCalendarTable)) {
+            qDebug() << "Created SavedCalendar table successfully!";
+        } else {
+            qDebug() << "Failed to create SavedCalendar table";
+        }
 
         mainLayout = new QVBoxLayout(this);
 

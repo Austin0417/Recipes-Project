@@ -8,11 +8,12 @@ void EventDialog::recordEvents() {
         if (it.value().size() > 1) {
             eventsList->append(it.key().toString("yyyy-MM-dd") + ": " + QString::number(it.value().size()) + " events total");
             for (int i = 0; i < it.value().size(); i++) {
-                eventsList->append("Event #" + QString::number(i + 1) + ": " + it.value()[i]);
+                eventsList->append(QString::number(i + 1) + ". " + it.value()[i]);
             }
             eventsList->append("--------------------------------------------");
         } else {
-            eventsList->append(it.value()[0]);
+            eventsList->append(it.key().toString("yyyy-MM-dd") + ":\n" + it.value()[0]);
+            eventsList->append("--------------------------------------------");
             qDebug() <<"Event info: " + it.value()[0];
         }
     }

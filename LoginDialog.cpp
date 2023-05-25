@@ -53,7 +53,10 @@ void LoginDialog::onLoginEnterPressed() {
                     query.clear();
                     query.prepare("SELECT name, ingredients, instructions, favorited FROM UserSavedRecipes WHERE id = ?");
                     query.addBindValue(id);
+
+                    // Initializing user's saved recipe list
                     if (query.exec()) {
+                        qDebug() << "Fetching user's saved recipes...";
                         QList<Recipe*> recipes;
                         while (query.next()) {
                             QString recipeName = query.value(0).toString();
@@ -64,9 +67,24 @@ void LoginDialog::onLoginEnterPressed() {
                             recipe->setFavorited(favoritedStatus);
                             recipes.append(recipe);
                         }
-                        std::reverse(recipes.begin(), recipes.end());
-                        window->setRecipeList(recipes);
+                    // Initializing user's saved calendar events
+                    std::reverse(recipes.begin(), recipes.end());
+                    window->setRecipeList(recipes);
                     }
+                    QMap<QDate, QList<QString>>* fetchedEvents = new QMap<QDate, QList<QString>>();
+                    query.clear();
+                    query.prepare("SELECT date, event FROM SavedCalendar WHERE id = ?");
+                    query.addBindValue(window->getCurrentUserId());
+                    if (query.exec()) {
+                        qDebug() << "Fetching user's saved calendar events...";
+                        while(query.next()) {
+                            QDate date = QDate::fromString(query.value(0).toString(), "yyyy-MM-dd");
+                            QString event = query.value(1).toString();
+                            (*fetchedEvents)[date].append(event);
+                        }
+                        window->setEvents(fetchedEvents);
+                    }
+
                 }
             } else {
                 QMessageBox::information(this, "Error logging in", "Invalid credentials, please try again.");
